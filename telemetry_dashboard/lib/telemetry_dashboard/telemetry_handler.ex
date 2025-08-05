@@ -4,9 +4,12 @@ defmodule TelemetryDashboard.TelemetryHandler do
   @doc """
   Attaches handlers telemetry events broadcast to Phoenix.
   """
-  def attach_to_event(event_name) do
+   def attach_to_event(event_name) do
+    # Create a unique ID for the handler by joining the event_name list
+    handler_id = Enum.map_join(event_name, ":", &Atom.to_string/1)
+
     :telemetry.attach(
-      "#{event_name}-handler",
+      "#{handler_id}-handler", # Use the string representation here
       event_name,
       &handle_event/4,
       nil
@@ -14,17 +17,18 @@ defmodule TelemetryDashboard.TelemetryHandler do
   end
 
   defp handle_event(event_name, measurements, metadata, _config) do
-    topic = "telemetry:#{Enum.join(event_nameme, ":")}"
+    # TelemetryDashboard.TelemetryHandler.attach_to_event([:phoenix, :endpoint, :stop]) was causing errors
+    # "converted" list to string
+    topic = event_name
+    |> Enum.map(&Atom.to_string/1)
+    |> Enum.join(":")
+    |> (&"telemetry:#{&1}").()
 
     payload = %{
       measurements: measurements,
       metadata: metadata
     }
 
-    Phoenix.PubSub.broadcast(
-      TelemetryDashboard.PubSub,
-      topic,
-      {"telemetry_event", event_name, payload}
-    )
+    Phoenix.PubSub.broadcast(TelemetryDashboard.PubSub, topic, {"telemetry_event", payload})
   end
 end
