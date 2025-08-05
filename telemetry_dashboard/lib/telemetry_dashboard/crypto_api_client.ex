@@ -1,4 +1,4 @@
-defmodule TelemetryDashboard.CryptoApiClient do
+defmodule TelemetryDashboard.CryptoAPIClient do
   @moduledoc """
   Client for interacting with the Crypto API.
   """
@@ -12,7 +12,8 @@ defmodule TelemetryDashboard.CryptoApiClient do
   def get_prices(ids) do
     ids_string = Enum.join(ids, ",")
 
-    Req.get!("#{@base_url}/simple/price",
+    response = Req.get!(
+      url: "#{@base_url}/simple/price",
       params: %{
         ids: ids_string,
         vs_currencies: "usd",
@@ -21,6 +22,7 @@ defmodule TelemetryDashboard.CryptoApiClient do
         {"x-cg-pro-api-key", @api_key}
       ]
     )
-    |> Req.Response.body()
+
+    response.body
   end
 end

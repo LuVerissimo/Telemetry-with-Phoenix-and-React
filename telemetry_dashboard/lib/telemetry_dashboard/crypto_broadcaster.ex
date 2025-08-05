@@ -9,7 +9,7 @@ defmodule TelemetryDashboard.CryptoBroadcaster do
   end
 
   @impl true
-  def init(nil) do
+  def init(_args) do
     :timer.send_interval(5000, self(), :fetch_and_broadcast)
     {:ok, %{}}
   end
@@ -22,6 +22,7 @@ defmodule TelemetryDashboard.CryptoBroadcaster do
       prices when is_map(prices) ->
         Phoenix.PubSub.broadcast(TelemetryDashboard.PubSub, @topic, {"crypto_prices", prices})
         Logger.info("Broadcasted crypto prices: #{inspect(prices)}")
+
       _ ->
         Logger.error("Failed to fetch crypto prices")
     end
