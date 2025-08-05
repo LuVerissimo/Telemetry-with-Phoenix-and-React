@@ -4,6 +4,7 @@ defmodule TelemetryDashboard.CryptoApiClient do
   """
 
   @base_url "https://api.coingecko.com/api/v3"
+  @api_key Application.get_env(:telemetry_dashboard, :coingecko_api_key)
 
   @doc """
   Fetches the current price of a cryptocurrency by its ID.
@@ -14,8 +15,11 @@ defmodule TelemetryDashboard.CryptoApiClient do
     Req.get!("#{@base_url}/simple/price",
       params: %{
         ids: ids_string,
-        vs_currencies: "usd"
-      }
+        vs_currencies: "usd",
+      },
+      headers: [
+        {"x-cg-pro-api-key", @api_key}
+      ]
     )
     |> Req.Response.body()
   end

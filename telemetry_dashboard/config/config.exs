@@ -31,6 +31,9 @@ config :telemetry_dashboard, TelemetryDashboardWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :telemetry_dashboard, TelemetryDashboard.Mailer, adapter: Swoosh.Adapters.Local
 
+config :telemetry_dashboard,
+    coingecko_api_key: System.get_env("COINGECKO_API_KEY") || "insert_your_coingecko_api_key"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

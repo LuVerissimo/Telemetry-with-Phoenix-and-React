@@ -18,14 +18,13 @@ defmodule TelemetryDashboard.CryptoBroadcaster do
   def handle_info(:fetch_and_broadcast, state) do
     ids = ["bitcoin", "ethereum", "ripple"]
 
-    case TelemetryDashboard.CryptoApiClient.get_prices(ids) do
+    case TelemetryDashboard.CryptoAPIClient.get_prices(ids) do
       prices when is_map(prices) ->
         Phoenix.PubSub.broadcast(TelemetryDashboard.PubSub, @topic, {"crypto_prices", prices})
-
-      Logger.info("Broadcasted crypto prices: #{inspect(prices)}") ->
-        -Logger.error("Failed to fetch crypto prices")
+        Logger.info("Broadcasted crypto prices: #{inspect(prices)}")
+      _ ->
+        Logger.error("Failed to fetch crypto prices")
     end
-
     {:noreply, state}
   end
 end

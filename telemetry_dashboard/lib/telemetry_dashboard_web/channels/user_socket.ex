@@ -3,6 +3,7 @@ defmodule TelemetryDashboardWeb.UserSocket do
 
   ## Channels
   channel "telemetry:metrics", TelemetryDashboardWeb.TelemetryChannel
+  channel "crypto:prices", TelemetryDashboardWeb.TelemetryChannel
 
   transport(:websocket, Phoenix.Transports.WebSocket)
 
