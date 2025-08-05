@@ -3,8 +3,9 @@ defmodule TelemetryDashboardWeb.UserSocket do
 
   ## Channels
   channel "telemetry:metrics", TelemetryDashboardWeb.TelemetryChannel
+  channel "crypto:prices", TelemetryDashboardWeb.TelemetryChannel
 
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport(:websocket, Phoenix.Transports.WebSocket)
 
   def connect(_params, socket) do
     {:ok, socket}

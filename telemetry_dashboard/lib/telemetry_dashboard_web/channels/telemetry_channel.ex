@@ -5,9 +5,6 @@ defmodule TelemetryDashboardWeb.TelemetryChannel do
     {:ok, socket}
   end
 
-  # def join("telemetry:" <> _other(_params, socket)) do
-  #   {:ok, %{reason: "unauthorized"}}
-  # end
   def join("telemetry:" <> _topic, _params, socket) do
     {:error, %{reason: "unauthorized"}}
   end
