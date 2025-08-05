@@ -13,6 +13,7 @@ defmodule TelemetryDashboard.Application do
       {DNSCluster,
        query: Application.get_env(:telemetry_dashboard, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: TelemetryDashboard.PubSub},
+      TelemetryDashboard.CryptoBroadcaster, # GenServer to fetch and broadcast crypto prices
       # Start the Finch HTTP client for sending emails
       {Finch, name: TelemetryDashboard.Finch},
       # Start a worker by calling: TelemetryDashboard.Worker.start_link(arg)
