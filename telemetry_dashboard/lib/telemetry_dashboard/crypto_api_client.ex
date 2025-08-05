@@ -8,12 +8,15 @@ defmodule TelemetryDashboard.CryptoApiClient do
   @doc """
   Fetches the current price of a cryptocurrency by its ID.
   """
-  def get_price(ids) do
+  def get_prices(ids) do
     ids_string = Enum.join(ids, ",")
-    Req.get!("#{@base_url}/simple/price", params: %{
-      ids: ids_string,
-      vs_currencies: "usd"
-    })
+
+    Req.get!("#{@base_url}/simple/price",
+      params: %{
+        ids: ids_string,
+        vs_currencies: "usd"
+      }
+    )
     |> Req.Response.body()
-    end
   end
+end
