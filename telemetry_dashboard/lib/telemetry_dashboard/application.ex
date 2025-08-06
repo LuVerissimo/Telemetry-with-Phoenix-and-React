@@ -13,7 +13,8 @@ defmodule TelemetryDashboard.Application do
       {DNSCluster,
        query: Application.get_env(:telemetry_dashboard, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: TelemetryDashboard.PubSub},
-      TelemetryDashboard.CryptoBroadcaster, # GenServer to fetch and broadcast crypto prices
+      TelemetryDashboard.CryptoBroadcaster,
+      TelemetryDashboard.TelemetryBroadcaster,
       # Start the Finch HTTP client for sending emails
       {Finch, name: TelemetryDashboard.Finch},
       # Start a worker by calling: TelemetryDashboard.Worker.start_link(arg)
@@ -22,10 +23,6 @@ defmodule TelemetryDashboard.Application do
       TelemetryDashboardWeb.Endpoint
     ]
 
-    TelemetryDashboard.TelemetryHandler.attach_to_event([:phoenix, :endpoint, :stop])
-
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: TelemetryDashboard.Supervisor]
     Supervisor.start_link(children, opts)
   end
