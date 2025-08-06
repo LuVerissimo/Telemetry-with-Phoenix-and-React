@@ -52,5 +52,9 @@ Git clone or SSH
     - npm install
     - npm start
 Once your env file is configured. You should see live updates.
-I throttled the API pull to reduce timeout so adjust it accordingly or buy a plan.    
+I throttled the API pull to reduce timeout so adjust it accordingly or buy a plan.
+<img width="795" height="683" alt="image" src="https://github.com/user-attachments/assets/c8d73bbd-113a-49a8-bd2b-3d392ed9671f" />
+
+
+    
 In the future, I'm going to explore a heavier project involving Ground Satellites.
