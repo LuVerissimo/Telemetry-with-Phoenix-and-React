@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
-import { channel } from './phoenix';
+import { telemetryChannel } from './phoenix';
 
 export const useChannel = (eventName: string) => {
     const [events, setEvents] = useState<any[]>([]);
 
     useEffect(() => {
-        channel.on(eventName, (payload) => {
+        telemetryChannel.on(eventName, (payload: any) => {
             setEvents((currentEvents) =>
                 [payload, ...currentEvents].slice(0, 50)
             );
         });
-
-        channel.off(eventName);
+        return () => {
+            telemetryChannel.off(eventName);
+        };
     }, [eventName]);
+
     return events;
 };

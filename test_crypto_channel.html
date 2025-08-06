@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>Phoenix Crypto Channel Test</title>
+     <script src="https://cdn.jsdelivr.net/npm/phoenix@1.6.0/priv/static/phoenix.js"></script>
+     <style>
+          body {
+               font-family: sans-serif;
+               display: flex;
+               flex-direction: column;
+               align-items: center;
+               justify-content: center;
+               min-height: 100vh;
+               background-color: #f0f0f0;
+               margin: 0;
+               padding: 20px;
+          }
+
+          h1 {
+               color: #333;
+               margin-bottom: 20px;
+          }
+
+          #status {
+               font-size: 1.2em;
+               font-weight: bold;
+               color: #555;
+               margin-bottom: 30px;
+          }
+
+          #messages {
+               width: 80%;
+               max-width: 600px;
+               background-color: #fff;
+               border-radius: 8px;
+               box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+               padding: 20px;
+               max-height: 400px;
+               overflow-y: auto;
+               border: 1px solid #ddd;
+          }
+
+          .message-item {
+               border-bottom: 1px solid #eee;
+               padding: 10px 0;
+          }
+
+          .message-item:last-child {
+               border-bottom: none;
+          }
+
+          .message-item pre {
+               white-space: pre-wrap;
+               word-break: break-word;
+               font-size: 0.9em;
+               background-color: #f8f8f8;
+               padding: 8px;
+               border-radius: 4px;
+               overflow-x: auto;
+          }
+
+          .message-timestamp {
+               font-size: 0.8em;
+               color: #888;
+               margin-bottom: 5px;
+          }
+     </style>
+</head>
+
+<body>
+     <h1>Phoenix Crypto Channel Test</h1>
+     <div id="status">Connecting...</div>
+     <div id="messages">
+          <p>Waiting for messages...</p>
+     </div>
+
+     <script>
+          (function () {
+               if (!window.Phoenix || !window.Phoenix.Socket) {
+                    console.error("Phoenix library not loaded properly.");
+                    document.getElementById("status").textContent = "Phoenix.js failed to load.";
+                    return;
+               }
+
+               const Socket = window.Phoenix.Socket;
+
+               const statusDiv = document.getElementById("status");
+               const messagesDiv = document.getElementById("messages");
+
+               const socket = new Socket("ws://localhost:4000/socket", {
+                    logger: (kind, msg, data) =>
+                         console.log(`[Phoenix.js] ${kind}: ${msg}`, data),
+               });
+
+               socket.connect();
+
+               const channel = socket.channel("crypto:prices", {});
+
+               console.log("[Test Page] Attempting to join crypto channel:", channel.topic);
+
+               channel
+                    .join()
+                    .receive("ok", (resp) => {
+                         console.log("[Test Page] Joined crypto channel successfully", resp);
+                         statusDiv.textContent = "Connected to crypto:prices";
+                    })
+                    .receive("error", (resp) => {
+                         console.error("[Test Page] Unable to join crypto channel", resp);
+                         statusDiv.textContent = `Failed to connect: ${JSON.stringify(resp)}`;
+                    })
+                    .receive("timeout", () => {
+                         console.warn("[Test Page] Crypto channel join timed out.");
+                         statusDiv.textContent = "Connection timed out.";
+                    });
+
+               channel.on("crypto_prices", (payload) => {
+                    console.log("!!! RAW MESSAGE RECEIVED IN BROWSER !!!", payload);
+
+                    const messageItem = document.createElement("div");
+                    messageItem.className = "message-item";
+                    messageItem.innerHTML = `
+          <div class="message-timestamp">${new Date().toLocaleTimeString()}</div>
+          <pre>${JSON.stringify(payload, null, 2)}</pre>
+        `;
+                    messagesDiv.prepend(messageItem);
+
+                    if (messagesDiv.children.length > 20) {
+                         messagesDiv.removeChild(messagesDiv.lastChild);
+                    }
+               });
+
+               socket.onError(() => {
+                    console.error("[Test Page] Socket error!");
+                    statusDiv.textContent = "Socket Error!";
+               });
+
+               socket.onClose(() => {
+                    console.warn("[Test Page] Socket closed.");
+                    statusDiv.textContent = "Socket Closed.";
+               });
+
+               window.addEventListener("beforeunload", () => {
+                    channel.leave();
+                    socket.disconnect();
+               });
+          })();
+     </script>
+</body>
+
+</html>
