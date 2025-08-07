@@ -22,7 +22,7 @@ interface CryptoData {
 
 function App() {
   // const events = useChannel("telemetry_event");
-  const cryptoPrices = useCryptoChannel("crypto_prices") as CryptoData;
+  const cryptoPrices: CryptoData = useCryptoChannel("crypto_prices");
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -56,7 +56,7 @@ function App() {
         </div>
       </div>
 
-          // Optional Telemetry that can be configured in the backend depending on the use case
+          {/* Optional Telemetry that can be configured in the backend depending on the use case */}
       {/* <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">
         Optional Real-time Telemetry Dashboard
       </h1>
